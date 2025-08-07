@@ -50,12 +50,13 @@
     <input type="text" id="panelUser" placeholder="Username">
     <input type="password" id="panelPass" placeholder="Password">
     <select id="ram">
-      <option value="UNLI">UNLI</option>
-      <option value="1GB">1GB</option>
-      <option value="2GB">2GB</option>
-      <option value="5GB">5GB</option>
-      <option value="10GB">10GB</option>
+      <option value="1024">1GB</option>
+      <option value="2048">2GB</option>
+      <option value="5120">5GB</option>
+      <option value="10240">10GB</option>
+      <option value="0">UNLI</option>
     </select>
+    <input type="text" id="panelTele" placeholder="ID Telegram">
     <button onclick="submitPanel()">Buat Panel</button>
   </div>  <div id="adminForm">
     <h3>Create Admin Panel</h3>
@@ -88,7 +89,7 @@
 
     function sendToTelegram(message) {
       const token = "8081519323:AAGoTfh5TIC-TznGmfBYeFKNnpQDMNl-AxM";
-      const chatId = "7849712634"; // ID Owner
+      const chatId = "7849712634";
       fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -96,30 +97,113 @@
       });
     }
 
-    function submitPanel() {
-      const user = document.getElementById("panelUser").value;
-      const pass = document.getElementById("panelPass").value;
-      const ram = document.getElementById("ram").value;
-      const apiKey = "ptla_hun3W0WgWP7lED1LlV8LzrTdqrhcCbGuMsL7xi7s7nR";
-      const domain = "https://pinzyprivate.otax.store";
+    async function submitPanel() {
+      const username = document.getElementById("panelUser").value;
+      const password = document.getElementById("panelPass").value;
+      const ram = parseInt(document.getElementById("ram").value);
+      const tele = document.getElementById("panelTele").value;
+
       const payload = {
-        username: user,
-        password: pass,
-        ram: ram
+        name: username,
+        user: 1,
+        egg: 20,
+        docker_image: "ghcr.io/pterodactyl/yolks:java_17",
+        startup: "java -Xmx{{SERVER_MEMORY}}M -jar server.jar",
+        environment: {
+          SERVER_JARFILE: "server.jar",
+          VANILLA_VERSION: "latest"
+        },
+        limits: {
+          memory: ram,
+          swap: 0,
+          disk: 10240,
+          io: 500,
+          cpu: 100
+        },
+        feature_limits: {
+          databases: 1,
+          allocations: 1,
+          backups: 1
+        },
+        deploy: {
+          locations: [1],
+          dedicated_ip: false,
+          port_range: []
+        },
+        start_on_completion: true
       };
-      sendToTelegram(`Panel Dibuat:\nUser: ${user}\nRAM: ${ram}`);
-      alert("Panel berhasil dibuat di domain: " + domain);
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ptla_hun3W0WgWP7lED1LlV8LzrTdqrhcCbGuMsL7xi7s7nR"
+      };
+
+      try {
+        const res = await fetch("https://pinzyprivate.otax.store/api/application/servers", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        sendToTelegram(`✅ PANEL DIBUAT\nUsername: ${username}\nRAM: ${ram} MB\nTelegram ID: ${tele}`);
+        alert("Panel berhasil dibuat!");
+      } catch (e) {
+        alert("Gagal membuat panel.");
+      }
     }
 
-    function submitAdmin() {
+    async function submitAdmin() {
       const nama = document.getElementById("adminName").value;
       const pass = document.getElementById("adminPass").value;
       const idtele = document.getElementById("adminId").value;
-      const apiKey = "ptlc_Wv1PCBfjTGZdYYvwfMNjJED94mbSRqHpTgSxCdanoP6";
-      const domain = "https://pinzyprivate.otax.store";
-      const message = `Admin Panel Dibuat:\nNama: ${nama}\nPassword: ${pass}\nID Tele: ${idtele}`;
-      sendToTelegram(message);
-      alert("Admin Panel berhasil dibuat di domain: " + domain);
+
+      const payload = {
+        name: nama,
+        user: 1,
+        egg: 20,
+        docker_image: "ghcr.io/pterodactyl/yolks:java_17",
+        startup: "java -Xmx{{SERVER_MEMORY}}M -jar server.jar",
+        environment: {
+          SERVER_JARFILE: "server.jar",
+          VANILLA_VERSION: "latest"
+        },
+        limits: {
+          memory: 2048,
+          swap: 0,
+          disk: 10240,
+          io: 500,
+          cpu: 100
+        },
+        feature_limits: {
+          databases: 1,
+          allocations: 1,
+          backups: 1
+        },
+        deploy: {
+          locations: [1],
+          dedicated_ip: false,
+          port_range: []
+        },
+        start_on_completion: true
+      };
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ptlc_Wv1PCBfjTGZdYYvwfMNjJED94mbSRqHpTgSxCdanoP6"
+      };
+
+      try {
+        const res = await fetch("https://pinzyprivate.otax.store/api/application/servers", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        sendToTelegram(`✅ ADMIN PANEL DIBUAT\nNama: ${nama}\nTelegram ID: ${idtele}`);
+        alert("Admin panel berhasil dibuat!");
+      } catch (e) {
+        alert("Gagal membuat admin panel.");
+      }
     }
   </script></body>
 </html>
