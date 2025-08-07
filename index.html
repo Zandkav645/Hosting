@@ -1,120 +1,128 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZANDKAV Panel Access</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZANDKAV ADP Panel</title>
   <style>
     body {
-      margin: 0;
+      background: linear-gradient(120deg, #000000, #0f0f3f);
+      color: #00ffff;
       font-family: Arial, sans-serif;
-      background-color: #000;
-      color: #00f0ff;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    #access, #menu, #panelForm, #adminForm {
-      display: none;
       flex-direction: column;
-      gap: 10px;
-      background: #0a0a0a;
+      align-items: center;
       padding: 20px;
-      border: 1px solid #00f0ff;
+    }
+    .hidden {
+      display: none;
+    }
+    .panel {
+      background: #111133;
+      border: 1px solid #00ffff;
+      padding: 20px;
       border-radius: 10px;
+      margin: 10px;
+      width: 300px;
     }
-    input, select, button {
-      padding: 10px;
-      background: #000;
-      border: 1px solid #00f0ff;
-      color: #00f0ff;
-    }
-    button:hover {
-      cursor: pointer;
-      background: #00f0ff;
+    button {
+      background: #00ffff;
       color: #000;
+      border: none;
+      padding: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+      width: 100%;
+    }
+    select, input {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-  <div id="access">
-    <h2>Masukkan Akses Kunci</h2>
-    <input type="text" id="keyInput" placeholder="Akses Kunci">
-    <button onclick="verifyKey()">Masuk</button>
-  </div>  <div id="menu">
-    <h2>Selamat Datang di ZANDKAV ADP</h2>
+  <div id="auth" class="panel">
+    <h2>Masukkan Kunci Akses</h2>
+    <input type="text" id="accessKey" placeholder="Masukkan kunci akses" />
+    <button onclick="checkKey()">Masuk</button>
+  </div>  <div id="mainMenu" class="hidden">
+    <h2>Selamat datang di ZANDKAV ADP</h2>
     <button onclick="showPanelForm()">Create Panel</button>
     <button onclick="showAdminForm()">Create Admin Panel</button>
-  </div>  <div id="panelForm">
-    <h3>Create Panel</h3>
-    <input type="text" id="panelUser" placeholder="Username">
-    <input type="password" id="panelPass" placeholder="Password">
+  </div>  <div id="panelForm" class="panel hidden">
+    <h3>Buat Panel</h3>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="text" id="password" placeholder="Password" />
     <select id="ram">
-      <option value="1024">1GB</option>
-      <option value="2048">2GB</option>
-      <option value="5120">5GB</option>
-      <option value="10240">10GB</option>
-      <option value="0">UNLI</option>
+      <option value="unlimited">Unlimited RAM</option>
+      <option value="1024">1 GB</option>
+      <option value="2048">2 GB</option>
+      <option value="3072">3 GB</option>
+      <option value="4096">4 GB</option>
+      <option value="5120">5 GB</option>
+      <option value="6144">6 GB</option>
+      <option value="7168">7 GB</option>
+      <option value="8192">8 GB</option>
+      <option value="9216">9 GB</option>
+      <option value="10240">10 GB</option>
     </select>
-    <input type="text" id="panelTele" placeholder="ID Telegram">
-    <button onclick="submitPanel()">Buat Panel</button>
-  </div>  <div id="adminForm">
-    <h3>Create Admin Panel</h3>
-    <input type="text" id="adminName" placeholder="Nama">
-    <input type="password" id="adminPass" placeholder="Password">
-    <input type="text" id="adminId" placeholder="ID Telegram">
-    <button onclick="submitAdmin()">Buat Admin Panel</button>
+    <input type="text" id="userTelegramId" placeholder="ID Telegram Kamu" />
+    <button onclick="createPanel()">Kirim & Buat Panel</button>
+  </div>  <div id="adminForm" class="panel hidden">
+    <h3>Buat Admin Panel</h3>
+    <input type="text" id="adminUsername" placeholder="Username" />
+    <input type="text" id="adminPassword" placeholder="Password" />
+    <input type="text" id="adminTelegramId" placeholder="ID Telegram Kamu" />
+    <button onclick="sendAdminPanel()">Kirim Admin Panel</button>
   </div>  <script>
-    document.getElementById("access").style.display = "flex";
+    const PLTA_KEY = "ptla_hun3W0WgWP7lED1LlV8LzrTdqrhcCbGuMsL7xi7s7nR";
+    const PLTC_KEY = "ptlc_Wv1PCBfjTGZdYYvwfMNjJED94mbSRqHpTgSxCdanoP6";
+    const TELEGRAM_BOT_TOKEN = "8081519323:AAGoTfh5TIC-TznGmfBYeFKNnpQDMNl-AxM";
+    const OWNER_ID = "7849712634";
+    const PANEL_URL = "https://pinzyprivate.otax.store";
 
-    function verifyKey() {
-      const key = document.getElementById("keyInput").value;
+    function checkKey() {
+      const key = document.getElementById("accessKey").value;
       if (key === "ZANDKAV ADP") {
-        document.getElementById("access").style.display = "none";
-        document.getElementById("menu").style.display = "flex";
+        document.getElementById("auth").classList.add("hidden");
+        document.getElementById("mainMenu").classList.remove("hidden");
       } else {
-        alert("Kunci Salah!");
+        alert("Kunci akses salah!");
       }
     }
 
     function showPanelForm() {
-      document.getElementById("menu").style.display = "none";
-      document.getElementById("panelForm").style.display = "flex";
+      document.getElementById("panelForm").classList.remove("hidden");
+      document.getElementById("adminForm").classList.add("hidden");
     }
 
     function showAdminForm() {
-      document.getElementById("menu").style.display = "none";
-      document.getElementById("adminForm").style.display = "flex";
+      document.getElementById("adminForm").classList.remove("hidden");
+      document.getElementById("panelForm").classList.add("hidden");
     }
 
-    function sendToTelegram(message) {
-      const token = "8081519323:AAGoTfh5TIC-TznGmfBYeFKNnpQDMNl-AxM";
-      const chatId = "7849712634";
-      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text: message })
-      });
-    }
+    async function createPanel() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const ram = document.getElementById("ram").value;
+      const teleId = document.getElementById("userTelegramId").value;
 
-    async function submitPanel() {
-      const username = document.getElementById("panelUser").value;
-      const password = document.getElementById("panelPass").value;
-      const ram = parseInt(document.getElementById("ram").value);
-      const tele = document.getElementById("panelTele").value;
+      if (!username || !password || !teleId) {
+        return alert("Isi semua kolom dengan benar!");
+      }
 
-      const payload = {
+      const data = {
         name: username,
         user: 1,
         egg: 20,
-        docker_image: "ghcr.io/pterodactyl/yolks:java_17",
-        startup: "java -Xmx{{SERVER_MEMORY}}M -jar server.jar",
+        docker_image: "ghcr.io/parkervcp/yolks:nodejs_18",
+        startup: "npm start",
         environment: {
-          SERVER_JARFILE: "server.jar",
-          VANILLA_VERSION: "latest"
+          USERNAME: username,
+          PASSWORD: password
         },
         limits: {
-          memory: ram,
+          memory: ram === "unlimited" ? 0 : parseInt(ram),
           swap: 0,
           disk: 10240,
           io: 500,
@@ -122,88 +130,76 @@
         },
         feature_limits: {
           databases: 1,
-          allocations: 1,
-          backups: 1
+          allocations: 1
+        },
+        allocation: {
+          default: 1
         },
         deploy: {
           locations: [1],
           dedicated_ip: false,
           port_range: []
-        },
-        start_on_completion: true
-      };
-
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ptla_hun3W0WgWP7lED1LlV8LzrTdqrhcCbGuMsL7xi7s7nR"
+        }
       };
 
       try {
-        const res = await fetch("https://pinzyprivate.otax.store/api/application/servers", {
+        const res = await fetch(`${PANEL_URL}/api/application/servers`, {
           method: "POST",
-          headers,
-          body: JSON.stringify(payload)
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${PLTA_KEY}`,
+            "Accept": "Application/vnd.pterodactyl.v1+json"
+          },
+          body: JSON.stringify(data)
         });
-        const data = await res.json();
-        sendToTelegram(`✅ PANEL DIBUAT\nUsername: ${username}\nRAM: ${ram} MB\nTelegram ID: ${tele}`);
-        alert("Panel berhasil dibuat!");
-      } catch (e) {
-        alert("Gagal membuat panel.");
+
+        if (!res.ok) throw new Error("Gagal membuat panel");
+
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: teleId,
+            text: `Panel berhasil dibuat dengan username: ${username}`
+          })
+        });
+
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: OWNER_ID,
+            text: `User baru membuat panel: ${username} (${teleId})`
+          })
+        });
+
+        alert("Panel berhasil dibuat dan dikirim ke Telegram!");
+      } catch (err) {
+        alert("Terjadi kesalahan saat membuat panel.");
       }
     }
 
-    async function submitAdmin() {
-      const nama = document.getElementById("adminName").value;
-      const pass = document.getElementById("adminPass").value;
-      const idtele = document.getElementById("adminId").value;
+    function sendAdminPanel() {
+      const username = document.getElementById("adminUsername").value;
+      const password = document.getElementById("adminPassword").value;
+      const teleId = document.getElementById("adminTelegramId").value;
 
-      const payload = {
-        name: nama,
-        user: 1,
-        egg: 20,
-        docker_image: "ghcr.io/pterodactyl/yolks:java_17",
-        startup: "java -Xmx{{SERVER_MEMORY}}M -jar server.jar",
-        environment: {
-          SERVER_JARFILE: "server.jar",
-          VANILLA_VERSION: "latest"
-        },
-        limits: {
-          memory: 2048,
-          swap: 0,
-          disk: 10240,
-          io: 500,
-          cpu: 100
-        },
-        feature_limits: {
-          databases: 1,
-          allocations: 1,
-          backups: 1
-        },
-        deploy: {
-          locations: [1],
-          dedicated_ip: false,
-          port_range: []
-        },
-        start_on_completion: true
-      };
-
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ptlc_Wv1PCBfjTGZdYYvwfMNjJED94mbSRqHpTgSxCdanoP6"
-      };
-
-      try {
-        const res = await fetch("https://pinzyprivate.otax.store/api/application/servers", {
-          method: "POST",
-          headers,
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        sendToTelegram(`✅ ADMIN PANEL DIBUAT\nNama: ${nama}\nTelegram ID: ${idtele}`);
-        alert("Admin panel berhasil dibuat!");
-      } catch (e) {
-        alert("Gagal membuat admin panel.");
+      if (!username || !password || !teleId) {
+        return alert("Isi semua kolom dengan benar!");
       }
+
+      const text = `Admin Panel Request:\nUsername: ${username}\nPassword: ${password}\nTelegram ID: ${teleId}`;
+
+      fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: OWNER_ID,
+          text
+        })
+      })
+        .then(() => alert("Admin panel request terkirim ke Owner!"))
+        .catch(() => alert("Gagal mengirim ke Telegram."));
     }
   </script></body>
 </html>
